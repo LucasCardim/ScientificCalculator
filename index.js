@@ -2,7 +2,6 @@
 
 const inElement = document.querySelector('.in');
 const outValueElement = document.querySelector('.op value');
-console.log('elemento html', outValueElement);
 const resValueElement = document.querySelector('.res value');
 
 // variaveis globais:
@@ -272,3 +271,17 @@ const createInterfaceButtons = () => {
 };
 
 createInterfaceButtons();
+
+// funçao do event listener para cada click nos botoes criados
+
+const buttonsEvents = () => {
+  inElement.addEventListener('click', e => {
+    const eTarget = e.target;
+
+    buttons.forEach(button => {
+      if (button.name === eTarget.id) doMath(button);
+    });
+  });
+};
+
+buttonsEvents();
