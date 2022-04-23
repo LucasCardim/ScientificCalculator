@@ -384,3 +384,24 @@ const updateOutOp = op => (outValueElement.innerHTML = op);
 
 const updateOutResult = res => (resValueElement.innerHTML = res);
 
+// funçao que converte o angulo de graus para radianos, se o rad estiver ativado, simplesmente chama a funçao de retorno
+
+const trig = (callback, angle) => {
+  if (!radian) {
+    angle *= (Math.PI / 180); // formula para trasformar graus em radianos
+  }
+
+  return callback(angle);
+}
+
+// funçao que calcula degrees para radians. Primeiro avalia-se se rad esta abilitado(se true retorna o callback(value)) se false, retorna o valor em graus(deg);
+
+const invTrig = (callback, value) => {
+  let angle = callback(value);
+
+  if(!radian) {
+    angle *= (180 / Math.PI); // formula para tranformar radianos em graus
+  }
+
+  return angle;
+}
