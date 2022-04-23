@@ -1,8 +1,9 @@
 // selecionando os elementos no DOM:
 
 const inElement = document.querySelector('.in');
-const outValueElement = document.querySelector('.op value');
-const resValueElement = document.querySelector('.res value');
+const outValueElement = document.querySelector('.op-value');
+const resValueElement = document.querySelector('.res-value');
+
 
 // variaveis globais:
 
@@ -13,10 +14,14 @@ const mathData = {
   operation: [],
   formula: [],
 };
+let ans = 0;
+let formulaString = '';
+
 
 // botoes da interface da calculadora:
 // um array de objetos, onde, o nome sera colocado no id do botao no DOM e o symbol sera a interface que o usuario verá.
-let buttons = [
+
+const buttons = [
   {
     name: 'rad',
     symbol: 'RAD',
@@ -74,20 +79,20 @@ let buttons = [
   {
     name: 'cos',
     symbol: 'cos',
-    formula: 'trigo(Math.cos,',
-    type: 'trigo_function',
+    formula: 'trig(Math.cos,',
+    type: 'trigFunction',
   },
   {
     name: 'sin',
     symbol: 'sin',
-    formula: 'trigo(Math.sin,',
-    type: 'trigo_function',
+    formula: 'trig(Math.sin,',
+    type: 'trigFunction',
   },
   {
     name: 'tan',
     symbol: 'tan',
-    formula: 'trigo(Math.tan,',
-    type: 'trigo_function',
+    formula: 'trig(Math.tan,',
+    type: 'trigFunction',
   },
   {
     name: '7',
@@ -123,19 +128,19 @@ let buttons = [
     name: 'arccos',
     symbol: 'acos',
     formula: 'invTrig(Math.acos,',
-    type: 'trigo_function',
+    type: 'trigFunction',
   },
   {
     name: 'arcsin',
     symbol: 'asin',
-    formula: 'invTri(Math.asin,',
-    type: 'trigo_function',
+    formula: 'invTrig(Math.asin,',
+    type: 'trigFunction',
   },
   {
     name: 'arctan',
     symbol: 'atan',
     formula: 'invTrig(Math.atan,',
-    type: 'trigo_function',
+    type: 'trigFunction',
   },
   {
     name: '4',
@@ -285,3 +290,77 @@ const buttonsEvents = () => {
 };
 
 buttonsEvents();
+
+// funçao que compara os tipos de cada botao e faz um push no array mathData.operation e mathData.formula com o respectivo simbolo e formula e faz a operaçao matematica correspondente
+
+const doMath = button => {
+  if (button.type === 'op') {
+    mathData.operation.push(button.symbol);
+    mathData.formula.push(button.formula);
+  } else if (button.type === 'number') {
+    mathData.operation.push(button.symbol);
+    mathData.formula.push(button.formula);
+  } else if (button.type === 'trigFunction') {
+    mathData.operation.push(button.symbol + '(');
+    mathData.formula.push(button.formula);
+  } else if (button.type === 'mathFunction') {
+    let symbol;
+    let formula;
+
+    if (button.name === 'factorial') {
+      symbol = '!';
+      formula = button.formula;
+      mathData.operation.push(symbol);
+      mathData.formula.push(formula);
+    } else if (button.name === 'power') {
+      symbol = '^(';
+      formula = button.formula;
+
+      mathData.operation.push(symbol);
+      mathData.formula.push(formula);
+    } else if (button.type === 'square') {
+      symbol = '^(';
+      formula = button.formula;
+
+      mathData.operation.push(symbol);
+      mathData.formula.push(formula);
+
+      mathData.operation.push('2)');
+      mathData.formula.push('2)');
+    } else {
+      symbol = button.symbol + '(';
+      formula = button.formula + '(';
+      mathData.operation.push(symbol);
+      mathData.formula.push(formula);
+    }
+  } else if (button.type === 'key') {
+    if (button.name === 'clear') {
+      mathData.operation = [];
+      mathData.formula = [];
+
+      updateOutResult(0);
+    } else if (button.name === 'delete') {
+      mathData.operation.pop(); // remove o ultimo elemento do array
+      mathData.formula.pop();
+    }
+  } else if (button.type === 'calculate') {
+    formulaString = mathData.formula.join('');
+
+    const result = eval(formulaString);
+
+    updateOutResult(result);
+  }
+
+  updateOutOp(mathData.operation.join(''));
+};
+
+// funçao que atualiza a operaçao no output
+
+const updateOutOp = op => (outValueElement.innerHTML = op);
+
+// funçao que atualiza o resultado da operaçao
+
+const updateOutResult = res => (resValueElement.innerHTML = res);
+
+// funçao trigonometrica, usando o objeto Math.
+

@@ -36,7 +36,7 @@ html {
   width: 600px;
   height: 70px;
 
-  color: #acacac;
+  color: #ff0000;
 
   font-size: 1.9em;
   font-weight: bold;
@@ -45,7 +45,7 @@ html {
   overflow: hidden;
 }
 
-.op .value {
+.op-value {
   position: absolute;
 
   bottom: 5px;
@@ -68,7 +68,7 @@ html {
   position: relative;
 }
 
-.res .value {
+.res .res-value {
   position: absolute;
 
   top: 50%;
@@ -80,7 +80,7 @@ html {
 }
 
 .in {
-  background-color: rgb(141, 126, 126);
+  background-color: rgb(133, 121, 121);
 
   border-radius: 0 0 25px 25px;
   border: 1px solid #1d1d1d;
@@ -97,11 +97,11 @@ html {
   width: 50px;
   height: 50px;
 
-  font-size: 1.5em;
+  font-size: 1em;
 
   border: none;
   border-radius: 50%;
-  background-color: transparent;
+  background-color: #ecece6;
 
   margin: 8px;
 
@@ -110,6 +110,7 @@ html {
 
 .row button:hover {
   font-weight: bold;
+  font-size: 1.5em;
 }
 
 .row #calculate {
@@ -130,7 +131,7 @@ html {
   color: #18b893;
 }
 
-.input button span {
+.in button sup {
   font-size: 0.6em;
   position: absolute;
 }
