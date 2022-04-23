@@ -4,7 +4,6 @@ const inElement = document.querySelector('.in');
 const outValueElement = document.querySelector('.op-value');
 const resValueElement = document.querySelector('.res-value');
 
-
 // variaveis globais:
 
 const operatorsArray = ['+', '-', '*', '/'];
@@ -16,7 +15,7 @@ const mathData = {
 };
 let ans = 0;
 let formulaString = '';
-
+let radian = true;
 
 // botoes da interface da calculadora:
 // um array de objetos, onde, o nome sera colocado no id do botao no DOM e o symbol sera a interface que o usuario verá.
@@ -277,6 +276,22 @@ const createInterfaceButtons = () => {
 
 createInterfaceButtons();
 
+// selecionando os botoes RAD e DEG no DOM:
+
+const radButton = document.getElementById('rad');
+const degButton = document.getElementById('deg');
+
+// a calculadora sera sempre inicializada com o button rad abilitado, entao a classe angle estara presente no radButton:
+
+radButton.classList.add('angle');
+
+// funçao que ativa a resposta em radianos (rad) ou graus (deg)
+
+const toggleRadDeg = () => {
+  radButton.classList.toggle('angle');
+  degButton.classList.toggle('angle');
+};
+
 // funçao do event listener para cada click nos botoes criados
 
 const buttonsEvents = () => {
@@ -294,6 +309,7 @@ buttonsEvents();
 // funçao que compara os tipos de cada botao e faz um push no array mathData.operation e mathData.formula com o respectivo simbolo e formula e faz a operaçao matematica correspondente
 
 const doMath = button => {
+  console.log(button);
   if (button.type === 'op') {
     mathData.operation.push(button.symbol);
     mathData.formula.push(button.formula);
@@ -342,6 +358,12 @@ const doMath = button => {
     } else if (button.name === 'delete') {
       mathData.operation.pop(); // remove o ultimo elemento do array
       mathData.formula.pop();
+    } else if (button.name === 'rad') {
+      radian = true;
+      toggleRadDeg();
+    } else if (button.name === 'deg') {
+      radian = false;
+      toggleRadDeg();
     }
   } else if (button.type === 'calculate') {
     formulaString = mathData.formula.join('');
@@ -361,6 +383,4 @@ const updateOutOp = op => (outValueElement.innerHTML = op);
 // funçao que atualiza o resultado da operaçao
 
 const updateOutResult = res => (resValueElement.innerHTML = res);
-
-// funçao trigonometrica, usando o objeto Math.
 
