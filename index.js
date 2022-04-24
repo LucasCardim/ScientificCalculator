@@ -8,7 +8,7 @@ const resValueElement = document.querySelector('.res-value');
 
 const operatorsArray = ['+', '-', '*', '/'];
 const pow = 'POWER(';
-const factorial = 'FACTORIAL';
+const FACTORIAL = 'FACTORIAL(';
 const mathData = {
   operation: [],
   formula: [],
@@ -124,19 +124,19 @@ const buttons = [
     type: 'number',
   },
   {
-    name: 'arccos',
+    name: 'acos',
     symbol: 'acos',
     formula: 'invTrig(Math.acos,',
     type: 'trigFunction',
   },
   {
-    name: 'arcsin',
+    name: 'asin',
     symbol: 'asin',
     formula: 'invTrig(Math.asin,',
     type: 'trigFunction',
   },
   {
-    name: 'arctan',
+    name: 'atan',
     symbol: 'atan',
     formula: 'invTrig(Math.atan,',
     type: 'trigFunction',
@@ -168,7 +168,7 @@ const buttons = [
   {
     name: 'factorial',
     symbol: '×!',
-    formula: factorial,
+    formula: FACTORIAL,
     type: 'mathFunction',
   },
   {
@@ -368,8 +368,19 @@ const doMath = button => {
   } else if (button.type === 'calculate') {
     formulaString = mathData.formula.join('');
 
-    const result = eval(formulaString);
-
+    let result;
+    try {
+      result = eval(formulaString);
+    } catch (e) {
+      if (e instanceof SyntaxError) {
+        result = 'Syntax Error!';
+        updateOutResult(result);
+        return;
+      }
+    }
+    ans = result;
+    mathData.operation = [ result ];
+    mathData.formula = [ result ];
     updateOutResult(result);
   }
 
@@ -384,24 +395,74 @@ const updateOutOp = op => (outValueElement.innerHTML = op);
 
 const updateOutResult = res => (resValueElement.innerHTML = res);
 
-// funçao que converte o angulo de graus para radianos, se o rad estiver ativado, simplesmente chama a funçao de retorno
+// funçao que converte o angulo de graus para radianos, se o rad estiver ativado, simplesmente chama a funçao definida na mathData.formula (callback);
 
 const trig = (callback, angle) => {
   if (!radian) {
-    angle *= (Math.PI / 180); // formula para trasformar graus em radianos
+    angle *= Math.PI / 180; // formula para trasformar graus em radianos
   }
 
-  return callback(angle);
-}
+  return callback(angle); // chama a respectiva Math.trigo de cada propriedade, definida no array mathData.formula
+};
 
 // funçao que calcula degrees para radians. Primeiro avalia-se se rad esta abilitado(se true retorna o callback(value)) se false, retorna o valor em graus(deg);
 
 const invTrig = (callback, value) => {
-  let angle = callback(value);
+  let angle = callback(value); // chama a respectiva Math.trigo de cada propriedade, definida no array mathData.formula
 
-  if(!radian) {
-    angle *= (180 / Math.PI); // formula para tranformar radianos em graus
+  if (!radian) {
+    angle *= 180 / Math.PI; // formula para tranformar radianos em graus
   }
 
   return angle;
-}
+};
+
+// funçao gamma, utilizada para calcular aproximaçoes decimais, utilizando o metodo de aproximaçoes de Lanczo:
+// retirada e adpatada de: http://jsfiddle.net/Fzy9C/
+
+const gamma = z => {
+  let g = 7; // representa a precisao desejada, ou seja, 7 casas decimais;
+  let C = [
+    0.99999999999980993,
+    676.5203681218851,
+    -1259.1392167224028,
+    771.32342877765313,
+    -176.61502916214059,
+    12.507343278686905,
+    -0.13857109526572012,
+    9.9843695780195716 * Math.pow(10, -6),
+    1.5056327351493116 * Math.pow(10, -7),
+  ]; // sao as constantes utilizadas na formula de Lanczo;
+
+  if (z < 0.5) {
+    return Math.PI / (Math.sin(Math.PI * z) * gamma(1 - z));
+  } else {
+    z -= 1;
+
+    let x = C[0];
+    for (let i = 1; i < g + 2; i++) {
+      x += C[i] / (z + i);
+    }
+
+    let t = z + g + 0.5;
+    return Math.sqrt(2 * Math.PI) * Math.pow(t, z + 0.5) * Math.exp(-t) * x;
+  }
+};
+
+// funçao fatorial
+
+const factorial = n => {
+  if (n % 1 !== 0) return gamma(n + 1); // para numeros decimais, chamamos a funçao gamma que é usada para calcular aproximaçoes decimais usando a aproximaçao de Lanczo.
+
+  if (n === 0 || n === 1) {
+    return 1;
+  }
+  let result = 1;
+
+  for (let i = 1; i <= n; i += 1) {
+    result *= i;
+    if (result === Infinity) return Infinity;
+  }
+
+  return result;
+};
